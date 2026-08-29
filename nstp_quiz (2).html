@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NSTP Module 1 Assessment — Drug Addiction Awareness</title>
+<style>
+  :root{
+    --ink:#0e2a26;
+    --paper:#f4f7f5;
+    --panel:#ffffff;
+    --line: #d9e2de;
+    --teal: #0f6b5c;
+    --teal-dark:#0a463c;
+    --amber:#c97a2b;
+    --red:#b3392c;
+    --green:#1f7a4d;
+    --mono: 'JetBrains Mono', 'Courier New', monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none;
+    min-height:100vh;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image: radial-gradient(circle at 1px 1px, rgba(15,107,92,0.07) 1px, transparent 0);
+    background-size: 22px 22px;
+    pointer-events:none;
+    z-index:0;
+  }
+  .wrap{
+    position:relative; z-index:1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 28px 20px 80px;
+  }
+  header.top{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    border-bottom: 3px solid var(--teal-dark);
+    padding-bottom: 14px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .brand-eyebrow{
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin: 0 0 4px;
+  }
+  .brand-title{
+    font-size: 26px;
+    margin: 0;
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+  .badge{
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--teal-dark);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  /* ---- Card shell shared by screens ---- */
+  .card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 30px;
+    box-shadow: 0 1px 0 rgba(14,42,38,0.04);
+  }
+  .screen{ display:none; }
+  .screen.active{ display:block; }
+
+  h2{ margin-top:0; color: var(--teal-dark); font-size: 21px; }
+  p.lead{ font-size: 15.5px; line-height: 1.65; color:#33453f; }
+
+  .rules{
+    list-style: none;
+    margin: 18px 0;
+    padding: 0;
+    display:grid;
+    gap: 10px;
+  }
+  .rules li{
+    display:flex; gap:12px; align-items:flex-start;
+    font-size: 14.5px; line-height:1.55;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--teal);
+    padding: 11px 14px;
+    border-radius: 4px;
+  }
+  .rules li .num{
+    font-family: var(--mono); font-weight:700; color: var(--teal-dark);
+    flex-shrink:0;
+  }
+
+  input[type="text"]{
+    width:100%;
+    font-family: inherit;
+    font-size: 15px;
+    padding: 11px 12px;
+    border: 1px solid #b9c8c3;
+    border-radius: 4px;
+    background: #fff;
+    margin-top: 6px;
+  }
+  label.field-label{
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--teal-dark);
+  }
+
+  .btn{
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: var(--teal-dark);
+    color:#fff;
+    border:none;
+    padding: 13px 22px;
+    border-radius: 4px;
+    cursor:pointer;
+    transition: background .15s ease, transform .1s ease;
+  }
+  .btn:hover{ background: var(--teal); }
+  .btn:active{ transform: translateY(1px); }
+  .btn.secondary{
+    background: transparent;
+    color: var(--teal-dark);
+    border: 1px solid var(--teal-dark);
+  }
+  .btn.secondary:hover{ background: rgba(15,107,92,0.08); }
+  .btn:disabled{ opacity:0.45; cursor:not-allowed; }
+  .btn-row{ display:flex; gap:10px; margin-top:22px; flex-wrap:wrap; }
+
+  /* ---- Exam header bar ---- */
+  .exam-bar{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom: 16px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .timer{
+    font-family: var(--mono);
+    font-weight:700;
+    font-size: 15px;
+    background: var(--teal-dark);
+    color:#fff;
+    padding: 7px 12px;
+    border-radius: 4px;
+    letter-spacing: 0.03em;
+  }
+  .timer.low{ background: var(--red); }
+  .progress-track{
+    flex:1;
+    min-width: 140px;
+    height: 6px;
+    background: var(--line);
+    border-radius: 3px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background: var(--teal);
+    width:0%;
+    transition: width .25s ease;
+  }
+  .integrity-flag{
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--red);
+    display:none;
+    align-items:center;
+    gap:6px;
+  }
+
+  .q-meta{
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform:uppercase;
+    letter-spacing: 0.08em;
+    color: var(--teal);
+    margin-bottom: 6px;
+    display:flex; justify-content:space-between;
+  }
+  .q-text{
+    font-size: 18px;
+    line-height:1.5;
+    margin: 0 0 20px;
+    color: var(--ink);
+  }
+  .options{ display:grid; gap:10px; }
+  .opt{
+    display:flex; align-items:center; gap:12px;
+    border: 1.5px solid var(--line);
+    border-radius: 5px;
+    padding: 13px 14px;
+    cursor:pointer;
+    font-size: 15px;
+    background:#fff;
+    transition: border-color .12s ease, background .12s ease;
+  }
+  .opt:hover{ border-color: var(--teal); background: #f2f8f6; }
+  .opt.selected{ border-color: var(--teal-dark); background: #e7f2ee; font-weight:600; }
+  .opt .letter{
+    font-family: var(--mono);
+    font-weight:700;
+    color: var(--teal-dark);
+    width: 20px;
+    flex-shrink:0;
+  }
+
+  .nav-row{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top: 26px;
+    gap: 10px;
+    flex-wrap:wrap;
+  }
+  .jumpgrid{
+    display:grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 6px;
+    margin: 18px 0 4px;
+  }
+  .jumpgrid button{
+    font-family: var(--mono);
+    font-size: 11px;
+    border: 1px solid var(--line);
+    background:#fff;
+    border-radius: 3px;
+    padding: 6px 0;
+    cursor:pointer;
+    color: #5b6d67;
+  }
+  .jumpgrid button.answered{ background: var(--teal); color:#fff; border-color: var(--teal); }
+  .jumpgrid button.current{ outline: 2px solid var(--teal-dark); outline-offset:1px; }
+
+  /* ---- Results ---- */
+  .score-hero{
+    text-align:center;
+    padding: 18px 0 8px;
+  }
+  .score-num{
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--teal-dark);
+    line-height:1;
+  }
+  .score-sub{ font-family: var(--mono); font-size: 12px; color:#5b6d67; text-transform:uppercase; letter-spacing:.08em; margin-top:8px;}
+  .review-item{
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--green);
+    border-radius: 4px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height:1.55;
+  }
+  .review-item.wrong{ border-left-color: var(--red); }
+  .review-item .rq{ font-weight:700; margin-bottom:4px; }
+  .review-item .ra{ color:#33453f; }
+  .review-item .ra.wrong-ans{ color: var(--red); text-decoration: line-through; }
+  .review-item .ra.correct-ans{ color: var(--green); font-weight:600; }
+
+  .lockscreen{
+    position:fixed; inset:0;
+    background: rgba(10,20,18,0.94);
+    color:#fff;
+    z-index: 999;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center;
+    padding: 30px;
+  }
+  .lockscreen .box{ max-width:420px; }
+  .lockscreen h3{ font-size:22px; margin-bottom:10px; }
+  .lockscreen p{ font-size:14.5px; line-height:1.6; color:#dce8e4; }
+  .lockscreen .count{ font-family: var(--mono); font-size:40px; margin: 14px 0; color:#f2c94c; }
+
+  footer.note{
+    margin-top: 28px;
+    font-size: 12px;
+    color: #6d7d78;
+    line-height:1.6;
+    font-family: var(--mono);
+  }
+  @media (max-width:520px){
+    .jumpgrid{ grid-template-columns: repeat(5,1fr); }
+    .score-num{ font-size:42px; }
+  }
+</style>
+</head>
+<body oncontextmenu="return false;">
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="brand-eyebrow">NSTP · Civic Welfare Training Service</p>
+      <h1 class="brand-title">Module 1 Assessment</h1>
+    </div>
+    <span class="badge">Drug Addiction Awareness · Slides 7–31</span>
+  </header>
+
+  <!-- ================= INTRO SCREEN ================= -->
+  <section id="screen-intro" class="screen active">
+    <div class="card">
+      <h2>Before you begin</h2>
+      <p class="lead">This assessment covers slides 7–31 of the Health &amp; Safety Awareness Lecture (Module 1: Drug Addiction Awareness) with <span id="introItemCount">—</span> items. It contains multiple-choice and true-or-false items and is administered under <strong>Academic Integrity / Anti-Cheating Mode</strong>.</p>
+
+      <ul class="rules">
+        <li><span class="num">01</span><span>This is a closed-notes, one-attempt assessment. Once started, the timer cannot be paused, and the quiz auto-submits when time runs out or the attempt limit is reached.</span></li>
+        <li><span class="num">02</span><span>Right-click, text selection, copy, cut, and paste are disabled for the duration of the exam.</span></li>
+        <li><span class="num">03</span><span>Switching tabs, minimizing the window, or exiting full-screen is logged as a proctoring flag. <strong>Three flags will auto-submit your quiz.</strong></span></li>
+        <li><span class="num">04</span><span>You have <strong>60 minutes</strong> to answer all <span id="introItemCount2">—</span> items. You may move freely between questions using the navigation grid before submitting.</span></li>
+        <li><span class="num">05</span><span>This client-side mode is a classroom integrity deterrent, not a substitute for in-person or platform-level proctoring.</span></li>
+        <li><span class="num">06</span><span>Your name, course, and score will be recorded to the class Google Sheet upon submission.</span></li>
+      </ul>
+
+      <label class="field-label" for="studentName">Complete name</label><br>
+      <input type="text" id="studentName" placeholder="Last name, First name, Middle Initial">
+
+      <div style="height:14px;"></div>
+
+      <label class="field-label" for="studentCourse">Course / Section</label><br>
+      <input type="text" id="studentCourse" placeholder="e.g. BS Criminology 1-A">
+
+      <p id="introError" style="color:var(--red); font-size:13px; font-family: var(--mono); display:none; margin-top:10px;">Please enter your complete name and course before starting.</p>
+
+      <div class="btn-row">
+        <button class="btn" id="btnStart">Enter Full Screen &amp; Begin</button>
+      </div>
+    </div>
+    <footer class="note">NSTP HEALTH &amp; SAFETY AWARENESS LECTURE · MODULE 1 ASSESSMENT · <span id="introItemCount3">—</span> ITEMS</footer>
+  </section>
+
+  <!-- ================= QUIZ SCREEN ================= -->
+  <section id="screen-quiz" class="screen">
+    <div class="exam-bar">
+      <div class="timer" id="timerDisplay">60:00</div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="integrity-flag" id="integrityFlag">⚠ Flags: <span id="flagCount">0</span>/3</div>
+    </div>
+
+    <div class="card">
+      <div class="q-meta">
+        <span id="qLabel">Question 1 of 50</span>
+        <span id="qType">MULTIPLE CHOICE</span>
+      </div>
+      <p class="q-text" id="qText"></p>
+      <div class="options" id="qOptions"></div>
+
+      <div class="nav-row">
+        <button class="btn secondary" id="btnPrev">← Previous</button>
+        <button class="btn" id="btnNext">Next →</button>
+      </div>
+
+      <div class="jumpgrid" id="jumpGrid"></div>
+      <div class="btn-row">
+        <button class="btn" id="btnSubmit" style="background:var(--amber);">Submit Assessment</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RESULTS SCREEN ================= -->
+  <section id="screen-results" class="screen">
+    <div class="card">
+      <div class="score-hero">
+        <div class="score-num" id="scoreNum">0/50</div>
+        <div class="score-sub" id="scorePct">0% · Rating</div>
+      </div>
+      <p class="lead" id="scoreMsg" style="text-align:center;"></p>
+      <div class="btn-row" style="justify-content:center;">
+        <button class="btn secondary" id="btnToggleReview">Show Answer Review</button>
+      </div>
+      <div id="reviewList" style="margin-top:20px; display:none;"></div>
+    </div>
+    <footer class="note">SUBMITTED BY <span id="submittedName">—</span> · <span id="submittedTime">—</span></footer>
+  </section>
+</div>
+
+<div class="lockscreen" id="lockscreen" style="display:none;">
+  <div class="box">
+    <h3>⚠ Integrity Warning</h3>
+    <p>You left the assessment window or exited full-screen. This has been logged as a proctoring flag.</p>
+    <div class="count" id="lockFlagCount">1 / 3</div>
+    <p>Return to full-screen to continue. Reaching 3 flags will automatically submit your assessment as-is.</p>
+    <button class="btn" id="btnResume" style="margin-top:10px;">Return to Full Screen</button>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   QUESTION BANK — 50 items, slides 7–31 
+   ========================================================= */
+const QUESTIONS = [
+{t:"mc", q:"A drug is defined as:", opts:["Only substances that are illegal","Any natural or synthetic substance that changes how the body works","Only prescription medicine","Only substances banned by PDEA"], a:1},
+{t:"tf", q:"Medicines, caffeine, alcohol, and tobacco are also considered drugs.", a:true},
+{t:"mc", q:"What determines whether a drug's use is harmful, according to the lecture?", opts:["Only its legal status","The substance, the dose, the reason for use, and whether it is medically guided","Only its price","Only where it is purchased"], a:1},
+{t:"mc", q:"What is the continuum for drug use presented in the lecture?", opts:["Misuse → Recreational Use → Medical Use","Medical Use → Recreational Use → Misuse","Recreational Use → Medical Use → Misuse","Misuse → Medical Use → Recreational Use"], a:1},
+{t:"tf", q:"Not every drug is illegal or automatically dangerous.", a:true},
+{t:"mc", q:"How is addiction defined in the lecture?", opts:["A single bad decision","A moral failing","A hijacking of the brain's reward system that turns choice into compulsion","A temporary phase everyone goes through"], a:2},
+{t:"mc", q:"Which of the following is NOT one of the four hallmark signs of addiction?", opts:["Craving","Tolerance","Confidence","Withdrawal"], a:2},
+{t:"tf", q:"Addiction's four hallmark signs include craving, tolerance, withdrawal, and loss of control.", a:true},
+{t:"mc", q:"Why does the lecture say early drug use is riskier for youth?", opts:["Youth have stronger immune systems","Self-control and judgment brain circuits keep developing until roughly age 25","Youth are always supervised","Drugs cost more for youth"], a:1},
+{t:"tf", q:"Addiction can progress more quickly in a young person than in an adult.", a:true},
+{t:"mc", q:"What does 'higher stakes' mean for youth facing addiction?", opts:["Youth pay higher legal fines than adults","Addiction during the student years can mean interrupted schooling, strained family ties, and carrying stigma into adulthood","Youth have a higher tolerance to drugs","Youth face mandatory rehabilitation regardless of severity"], a:1},
+{t:"mc", q:"How is drug addiction (substance use disorder) best described in the lecture?", opts:["A moral failure","A chronic, relapsing brain condition marked by compulsive drug-seeking despite harmful consequences","A short-term inconvenience","A purely legal problem"], a:1},
+{t:"mc", q:"What is the four-step progression shown for drug addiction development?", opts:["Use → Addiction → Misuse → Dependence","Use → Misuse → Dependence → Addiction","Misuse → Use → Addiction → Dependence","Dependence → Use → Misuse → Addiction"], a:1},
+{t:"tf", q:"Addiction develops gradually and recovery is possible at every stage.", a:true},
+{t:"tf", q:"Genetics can account for roughly 40–60% of a person's vulnerability to addiction, according to the lecture.", a:true},
+{t:"mc", q:"Which is NOT one of the four broad categories of causes of drug addiction presented in the lecture?", opts:["Biological","Psychological","Social & Environmental","Financial Literacy"], a:3},
+{t:"mc", q:"Which of the following best describes the 'Availability' cause of drug addiction, per the lecture?", opts:["Genetics and inherited brain chemistry","Family conflict and peer pressure","Easy access, low cost, weak enforcement, and normalization in media or peer groups","Stress, trauma, and unresolved emotional pain"], a:2},
+{t:"mc", q:"What is described as the single strongest predictor of drug use among youth?", opts:["Media influence","Peer influence","Family income","School type"], a:1},
+{t:"mc", q:"Which of the following is listed under 'Life transitions' as a social/environmental cause of drug addiction?", opts:["Moving away from home, academic pressure, or lack of structure in college life","Genetics and brain chemistry","Availability and low cost","Family history of substance use"], a:0},
+{t:"tf", q:"Chronic stress, anxiety, or depression can lead some individuals to self-medicate, increasing addiction risk.", a:true},
+{t:"tf", q:"According to the lecture, repeated substance use can rewire the brain's reward and stress-response systems.", a:true},
+{t:"mc", q:"Which of the following is listed as a biological factor contributing to addiction risk?", opts:["Poverty and weak law enforcement","Adolescent brains still developing self-control circuits","Peer pressure to fit in","Normalization of substance use in media"], a:1},
+{t:"mc", q:"What are the five stages of drug addiction progression, in order?", opts:["Regular Use → Experimentation → Abuse → Dependence → Addiction","Experimentation → Regular Use → Risky Use/Abuse → Dependence → Addiction","Experimentation → Dependence → Regular Use → Abuse → Addiction","Addiction → Dependence → Abuse → Regular Use → Experimentation"], a:1},
+{t:"tf", q:"According to the lecture, not everyone who experiments with drugs moves through every stage of addiction.", a:true},
+{t:"mc", q:"At which stage do withdrawal symptoms such as anxiety, nausea, and cravings typically appear?", opts:["Experimentation","Regular Use","Dependence","Risky Use / Abuse"], a:2},
+{t:"mc", q:"Which category of substances includes alcohol and benzodiazepines, which slow brain activity?", opts:["Stimulants","Depressants","Hallucinogens","Inhalants"], a:1},
+{t:"mc", q:"Which category includes methamphetamine ('shabu') and cocaine?", opts:["Depressants","Stimulants","Opioids","Inhalants"], a:1},
+{t:"tf", q:"Prescription painkillers and heroin fall under the 'Opioids' category, which carries a high overdose risk.", a:true},
+{t:"mc", q:"Combining substances, including alcohol, is referred to in the lecture as:", opts:["Cross-tolerance","Polydrug use, which sharply multiplies health risks","A safe practice","Medical use"], a:1},
+{t:"mc", q:"Which three dimensions are used to categorize the effects of drug addiction?", opts:["Physical, Financial, Legal","Physical, Psychological, Social","Mental, Physical, Spiritual","Academic, Physical, Emotional"], a:1},
+{t:"tf", q:"Sharing needles increases the risk of infectious diseases such as HIV and Hepatitis.", a:true},
+{t:"mc", q:"What is the leading cause of preventable death associated with substance use?", opts:["Overdose","Malnutrition","Traffic accidents","Organ transplant rejection"], a:0},
+{t:"mc", q:"Which of the following is listed as a psychological / mental health effect of addiction?", opts:["Improved memory","Paranoia, hallucinations, or psychosis with certain substances","Increased self-esteem","Better academic performance"], a:1},
+{t:"tf", q:"Denial and rationalization can delay a person from seeking help for a substance use disorder.", a:true},
+{t:"mc", q:"Which of the following is listed as a social / family effect of addiction?", opts:["Strengthened family trust","Increased financial savings","Strained or broken relationships and neglect of responsibilities","Improved job performance"], a:2},
+{t:"mc", q:"Which group is identified as being at higher risk of trauma and future substance use because of a parent's substance use disorder?", opts:["Teachers","Children of individuals with substance use disorders","Employers","Barangay officials"], a:1},
+{t:"mc", q:"Which of the following is an 'Individual' risk factor for drug addiction, per the lecture?", opts:["Poverty","Genetics, mental health conditions, low self-esteem, poor coping skills","Weak law enforcement","Community norms"], a:1},
+{t:"tf", q:"Peer pressure and weak school policies are classified under 'Peer / School' risk factors in the lecture.", a:true},
+{t:"mc", q:"Which of the following is listed as a protective lifestyle habit against drug addiction?", opts:["Isolating from support systems","Regular physical activity and adequate sleep","Skipping sleep and poor diet","Normalizing 'just once won't hurt' thinking"], a:1},
+{t:"tf", q:"Involvement in sports, arts, or community service like NSTP is listed as a risk-increasing behavior.", a:false},
+{t:"mc", q:"How does the lecture define stigma related to addiction?", opts:["A helpful support system","Negative labeling, stereotyping, and discrimination against people who use drugs or are in recovery","A medical diagnosis","A legal penalty"], a:1},
+{t:"mc", q:"Which phrase does the lecture recommend using instead of 'addict'?", opts:["'Junkie'","'A person with a substance use disorder'","'Druggie'","'User'"], a:1},
+{t:"tf", q:"Person-first language separates the person from the disease, framing recovery as a health outcome rather than a moral reward.", a:true},
+{t:"mc", q:"Instead of saying a person 'is clean' or 'dirty' regarding a drug test, the lecture suggests saying:", opts:["'Passed or failed'","'Testing positive/negative'","'Good or bad'","'Winner or loser'"], a:1},
+{t:"mc", q:"Which of the following is listed as a community-level effect of drug addiction?", opts:["Increased crime and petty theft linked to funding substance use","Decreased healthcare costs","Increased school completion rates","Stronger family structures across generations"], a:0},
+{t:"mc", q:"What Philippine law is identified in the lecture as the Comprehensive Dangerous Drugs Act of 2002?", opts:["Republic Act 7610","Republic Act 9165","Republic Act 9262","Republic Act 10591"], a:1},
+{t:"mc", q:"Which body is described as the policy-making and strategy-setting body on drug prevention and control?", opts:["PDEA","Dangerous Drugs Board (DDB)","BADAC","Department of Health"], a:1},
+{t:"mc", q:"Which agency is identified as the lead enforcement agency implementing anti-drug operations in the Philippines?", opts:["Dangerous Drugs Board","Philippine Drug Enforcement Agency (PDEA)","Barangay Anti-Drug Abuse Council","Department of Health"], a:1},
+{t:"tf", q:"Barangay Anti-Drug Abuse Councils (BADAC) lead community-level drug prevention and reintegration initiatives.", a:true},
+{t:"mc", q:"What are the six steps for building an awareness campaign, in order, as presented in the lecture?", opts:["Message → Audience → Research → Channels → Evaluate → Implement","Research → Audience → Message → Channels → Implement → Evaluate","Audience → Research → Implement → Message → Channels → Evaluate","Research → Message → Audience → Implement → Channels → Evaluate"], a:1}
+];
+
+const TOTAL = QUESTIONS.length;
+document.getElementById('introItemCount').textContent = TOTAL;
+document.getElementById('introItemCount2').textContent = TOTAL;
+document.getElementById('introItemCount3').textContent = TOTAL;
+const TIME_LIMIT_SECONDS = 60 * 60;
+const MAX_FLAGS = 3;
+
+let answers = new Array(TOTAL).fill(null);
+let current = 0;
+let flagCount = 0;
+let timeLeft = TIME_LIMIT_SECONDS;
+let timerInterval = null;
+let submitted = false;
+let studentName = "";
+let studentCourse = "";
+
+/* =========================================================
+   GOOGLE SHEETS INTEGRATION
+   1. Create a Google Sheet. Add a header row:
+      Timestamp | Name | Course | Score | Total | Percent | Rating | Flags | Notes
+   2. In the Sheet, go to Extensions > Apps Script and paste the
+      doPost() script provided alongside this file, then deploy it
+      as a Web App (Execute as: Me, Who has access: Anyone).
+   3. Copy the deployment's Web App URL and paste it below.
+   ========================================================= */
+const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzdKom2xLVmzfnF1ks-5GJn5Ugkhu77MHmtlFu23aOJOKy1PegT0Sc6VuW1tTF3YJ2cOQ/exec";
+
+function submitToGoogleSheet(payload){
+  if(!GOOGLE_SHEET_WEB_APP_URL || GOOGLE_SHEET_WEB_APP_URL.indexOf('PASTE_YOUR') === 0){
+    console.warn('Google Sheet URL not configured — skipping remote save. Score was still calculated locally.');
+    return;
+  }
+  fetch(GOOGLE_SHEET_WEB_APP_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  }).catch(err => console.warn('Could not reach Google Sheet endpoint:', err));
+}
+
+const screenIntro = document.getElementById('screen-intro');
+const screenQuiz = document.getElementById('screen-quiz');
+const screenResults = document.getElementById('screen-results');
+const lockscreen = document.getElementById('lockscreen');
+
+/* ---------------- Anti-cheating measures ---------------- */
+document.addEventListener('copy', e => { if(screenQuiz.classList.contains('active')) e.preventDefault(); });
+document.addEventListener('cut', e => { if(screenQuiz.classList.contains('active')) e.preventDefault(); });
+document.addEventListener('paste', e => { if(screenQuiz.classList.contains('active')) e.preventDefault(); });
+document.addEventListener('selectstart', e => { if(screenQuiz.classList.contains('active')) e.preventDefault(); });
+document.addEventListener('keydown', e => {
+  if(!screenQuiz.classList.contains('active')) return;
+  const blocked =
+    e.key === 'F12' ||
+    (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase())) ||
+    (e.ctrlKey && e.key.toUpperCase() === 'U') ||
+    (e.ctrlKey && ['C','V','X'].includes(e.key.toUpperCase()));
+  if(blocked) e.preventDefault();
+});
+
+function requestFS(){
+  const el = document.documentElement;
+  if(el.requestFullscreen) return el.requestFullscreen().catch(()=>{});
+  if(el.webkitRequestFullscreen) return el.webkitRequestFullscreen();
+  return Promise.resolve();
+}
+function isFullscreen(){
+  return !!(document.fullscreenElement || document.webkitFullscreenElement);
+}
+
+function registerFlag(){
+  if(submitted) return;
+  flagCount++;
+  document.getElementById('integrityFlag').style.display = 'flex';
+  document.getElementById('flagCount').textContent = flagCount;
+  document.getElementById('lockFlagCount').textContent = flagCount + ' / ' + MAX_FLAGS;
+  if(flagCount >= MAX_FLAGS){
+    lockscreen.style.display = 'none';
+    finishQuiz(true);
+  } else {
+    lockscreen.style.display = 'flex';
+  }
+}
+
+document.addEventListener('visibilitychange', () => {
+  if(document.hidden && screenQuiz.classList.contains('active') && !submitted){
+    registerFlag();
+  }
+});
+window.addEventListener('blur', () => {
+  if(screenQuiz.classList.contains('active') && !submitted && document.hidden === false){
+    // slight debounce so fullscreen prompt itself doesn't trigger it
+  }
+});
+document.addEventListener('fullscreenchange', () => {
+  if(!isFullscreen() && screenQuiz.classList.contains('active') && !submitted){
+    registerFlag();
+  }
+});
+
+document.getElementById('btnResume').addEventListener('click', () => {
+  lockscreen.style.display = 'none';
+  requestFS();
+});
+
+/* ---------------- Intro → Start ---------------- */
+document.getElementById('btnStart').addEventListener('click', () => {
+  const nameField = document.getElementById('studentName');
+  const courseField = document.getElementById('studentCourse');
+  const name = nameField.value.trim();
+  const course = courseField.value.trim();
+  if(!name || !course){
+    document.getElementById('introError').style.display = 'block';
+    return;
+  }
+  document.getElementById('introError').style.display = 'none';
+  studentName = name;
+  studentCourse = course;
+  requestFS().then(startQuiz);
+});
+
+/* Shuffle helper (Fisher-Yates) */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* Build a shuffled-but-stable option order for every multiple-choice item.
+   The A/B/C/D button positions stay put — only which answer text sits in
+   which slot is randomized, once per attempt. */
+function shuffleAllOptions(){
+  QUESTIONS.forEach(item => {
+    if(item.t === 'mc'){
+      const withFlags = item.opts.map((text, idx) => ({ text, correct: idx === item.a }));
+      item.display = shuffle(withFlags);
+    }
+  });
+}
+
+function startQuiz(){
+  shuffleAllOptions();
+  screenIntro.classList.remove('active');
+  screenQuiz.classList.add('active');
+  buildJumpGrid();
+  renderQuestion();
+  timerInterval = setInterval(tick, 1000);
+}
+
+/* ---------------- Timer ---------------- */
+function tick(){
+  timeLeft--;
+  const m = Math.floor(timeLeft/60).toString().padStart(2,'0');
+  const s = (timeLeft%60).toString().padStart(2,'0');
+  const disp = document.getElementById('timerDisplay');
+  disp.textContent = m + ':' + s;
+  if(timeLeft <= 300) disp.classList.add('low');
+  if(timeLeft <= 0){
+    clearInterval(timerInterval);
+    finishQuiz(false, true);
+  }
+}
+
+/* ---------------- Rendering ---------------- */
+function buildJumpGrid(){
+  const grid = document.getElementById('jumpGrid');
+  grid.innerHTML = '';
+  for(let i=0;i<TOTAL;i++){
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    b.addEventListener('click', () => { current = i; renderQuestion(); });
+    grid.appendChild(b);
+  }
+}
+
+function renderQuestion(){
+  const item = QUESTIONS[current];
+  document.getElementById('qLabel').textContent = `Question ${current+1} of ${TOTAL}`;
+  document.getElementById('qType').textContent = item.t === 'tf' ? 'TRUE OR FALSE' : 'MULTIPLE CHOICE';
+  document.getElementById('qText').textContent = item.q;
+
+  const optsWrap = document.getElementById('qOptions');
+  optsWrap.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  const optionList = item.t === 'tf' ? ['True','False'] : item.display.map(o => o.text);
+
+  optionList.forEach((opt, idx) => {
+    const div = document.createElement('div');
+    div.className = 'opt';
+    const chosen = item.t === 'tf' ? (answers[current] === (idx===0)) : (answers[current] === idx);
+    if(chosen) div.classList.add('selected');
+    div.innerHTML = `<span class="letter">${letters[idx]}</span><span>${opt}</span>`;
+    div.addEventListener('click', () => {
+      answers[current] = item.t === 'tf' ? (idx === 0) : idx;
+      renderQuestion();
+    });
+    optsWrap.appendChild(div);
+  });
+
+  document.getElementById('progressFill').style.width = (( (current+1) /TOTAL)*100) + '%';
+
+  document.getElementById('btnPrev').disabled = current === 0;
+  document.getElementById('btnNext').textContent = current === TOTAL-1 ? 'Review' : 'Next →';
+
+  const buttons = document.querySelectorAll('#jumpGrid button');
+  buttons.forEach((b,i) => {
+    b.classList.toggle('answered', answers[i] !== null);
+    b.classList.toggle('current', i === current);
+  });
+}
+
+document.getElementById('btnPrev').addEventListener('click', () => { if(current>0){current--; renderQuestion();} });
+document.getElementById('btnNext').addEventListener('click', () => { if(current < TOTAL-1){current++; renderQuestion();} });
+document.getElementById('btnSubmit').addEventListener('click', () => {
+  const unanswered = answers.filter(a => a === null).length;
+  const msg = unanswered > 0
+    ? `You have ${unanswered} unanswered item(s). Submit anyway?`
+    : 'Submit your assessment? This cannot be undone.';
+  if(confirm(msg)) finishQuiz(false);
+});
+
+/* ---------------- Finish & Score ---------------- */
+function finishQuiz(byFlags, byTimeout){
+  if(submitted) return;
+  submitted = true;
+  clearInterval(timerInterval);
+  if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+
+  let score = 0;
+  const reviewHTML = [];
+  const perQuestion = [];
+  QUESTIONS.forEach((item, i) => {
+    const userAns = answers[i];
+    let correct, userLabel, correctLabel;
+    if(item.t === 'tf'){
+      correct = userAns === item.a;
+      userLabel = userAns === null ? 'No answer' : (userAns ? 'True' : 'False');
+      correctLabel = item.a ? 'True' : 'False';
+    } else {
+      correct = userAns !== null && item.display[userAns].correct;
+      userLabel = userAns === null ? 'No answer' : item.display[userAns].text;
+      correctLabel = item.display.find(o => o.correct).text;
+    }
+    if(correct) score++;
+    perQuestion.push({
+      num: i+1,
+      given: userLabel,
+      correctAnswer: correctLabel,
+      isCorrect: correct
+    });
+    reviewHTML.push(`
+      <div class="review-item ${correct ? '' : 'wrong'}">
+        <div class="rq">${i+1}. ${item.q}</div>
+        <div class="ra">Your answer: <span class="${correct ? '' : 'wrong-ans'}">${userLabel}</span></div>
+        ${correct ? '' : `<div class="ra">Correct answer: <span class="correct-ans">${correctLabel}</span></div>`}
+      </div>`);
+  });
+
+  const pct = Math.round((score/TOTAL)*100);
+  let rating = 'Needs Review';
+  if(pct >= 90) rating = 'Excellent';
+  else if(pct >= 75) rating = 'Passed';
+  else if(pct >= 60) rating = 'Marginal';
+
+  document.getElementById('scoreNum').textContent = `${score}/${TOTAL}`;
+  document.getElementById('scorePct').textContent = `${pct}% · ${rating}`;
+
+  let note = '';
+  if(byFlags) note = 'This assessment was auto-submitted after reaching the maximum of 3 integrity flags. ';
+  if(byTimeout) note = 'This assessment was auto-submitted because the 60-minute time limit was reached. ';
+  document.getElementById('scoreMsg').textContent = note + 'Review Module 1 (slides 7–31) for any items marked incorrect below.';
+
+  document.getElementById('reviewList').innerHTML = reviewHTML.join('');
+  document.getElementById('submittedName').textContent = `${studentName} · ${studentCourse}`;
+  document.getElementById('submittedTime').textContent = new Date().toLocaleString();
+
+  let autoSubmitReason = '';
+  if(byFlags) autoSubmitReason = 'Auto-submitted: 3 integrity flags';
+  if(byTimeout) autoSubmitReason = 'Auto-submitted: time limit reached';
+
+  submitToGoogleSheet({
+    name: studentName,
+    course: studentCourse,
+    score: score,
+    total: TOTAL,
+    percent: pct,
+    rating: rating,
+    flags: flagCount,
+    autoSubmitReason: autoSubmitReason,
+    perQuestion: perQuestion
+  });
+
+  screenQuiz.classList.remove('active');
+  screenResults.classList.add('active');
+}
+
+document.getElementById('btnToggleReview').addEventListener('click', function(){
+  const list = document.getElementById('reviewList');
+  const showing = list.style.display === 'block';
+  list.style.display = showing ? 'none' : 'block';
+  this.textContent = showing ? 'Show Answer Review' : 'Hide Answer Review';
+});
+
+/* Warn before leaving mid-quiz */
+window.addEventListener('beforeunload', function(e){
+  if(screenQuiz.classList.contains('active') && !submitted){
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+</script>
+</body>
+</html>
